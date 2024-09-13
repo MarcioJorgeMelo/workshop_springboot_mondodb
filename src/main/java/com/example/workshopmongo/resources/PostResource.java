@@ -13,6 +13,7 @@ import com.example.workshopmongo.resources.util.URL;
 import com.example.workshopmongo.services.PostService;
 
 import java.util.List;
+import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/posts")
@@ -37,6 +38,24 @@ public class PostResource {
 
         List<Post> list = service.findByTitle(text);
 
+        return ResponseEntity.ok().body(list);
+
+    }
+
+    @RequestMapping(value = "/fullsearch",method = RequestMethod.GET)
+    public ResponseEntity<List<Post>> fullSearch(
+        @RequestParam(value = "text", defaultValue = "") String text,
+        @RequestParam(value = "minDate", defaultValue = "") String minDate,
+        @RequestParam(value = "maxDate", defaultValue = "") String maxDate) {
+
+        text = URL.decodeParam(text);
+
+        Date min = URL.convertDare(minDate, new Date(0L));
+
+        Date max = URL.convertDare(maxDate, new Date());
+
+        List<Post> list = service.fullSearch(text, min, max);
+        
         return ResponseEntity.ok().body(list);
 
     }
